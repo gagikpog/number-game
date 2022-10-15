@@ -1,11 +1,19 @@
 import type { NextPage } from 'next';
-import styles from '../styles/Home.module.css';
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from '../common/themes';
+import Game from '../common/components/game';
 
 const Home: NextPage = () => {
     return (
-        <div className={styles.container}>
-        
-        </div>
+        <ThemeProvider theme={theme}>
+            <div className='tw-flex tw-w-full tw-h-full tw-flex-col'>
+                <div>Header</div>
+                <div className='tw-flex tw-flex-1'>
+                    <Game></Game>
+                    <Game></Game>
+                </div>
+            </div>
+        </ThemeProvider>
     );
 }
 
