@@ -1,10 +1,25 @@
 import { createSlice, configureStore, createAsyncThunk } from '@reduxjs/toolkit';
-import { getRandomNumber, matchNumbers, IQueryItem } from '../common/utils';
+import { getRandomNumber, matchNumbers, IQueryItem, isClient, ServiceEvents } from '../common/utils';
+import { Service } from '../common/service';
+
 export enum GameState {
     Game = 'game',
     Start = 'start',
     EndGame = 'endGame',
     Waiting = 'waiting'
+}
+let service: Service;
+
+if (isClient()) {
+    import('../common/service').then(({Service: _Service}) => {
+        service = new _Service();
+        service.subscribe<string>(ServiceEvents.open ,(peerId: string) => {
+            store.dispatch(setPickId(peerId));
+        });
+        service.subscribe<boolean>(ServiceEvents.connection ,(connected: boolean) => {
+            store.dispatch(setConnection(connected));
+        });
+    });
 }
 
 const queryPrivateNumber = getRandomNumber();
@@ -26,7 +41,9 @@ const gameSlice = createSlice({
     initialState: {
         privateNumber: getRandomNumber(),
         state: GameState.Start,
-        queryList: [] as IQueryItem[]
+        queryList: [] as IQueryItem[],
+        pickId: '',
+        connected: false
     },
     reducers: {
         setPrivateNumber: (state, action) => {
@@ -37,6 +54,15 @@ const gameSlice = createSlice({
         },
         setGameState: (state, action) => {
             state.state = action.payload;
+        },
+        connectTo: (state, action) => {
+            service?.connectTo(action.payload);
+        },
+        setPickId: (state, action) => {
+            state.pickId = action.payload;
+        },
+        setConnection: (state, action) => {
+            state.connected = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -46,7 +72,7 @@ const gameSlice = createSlice({
     }
 });
 
-export const { setPrivateNumber, setGameState, generatePrivateNumber } = gameSlice.actions;
+export const { setPrivateNumber, setGameState, generatePrivateNumber, connectTo, setPickId, setConnection } = gameSlice.actions;
 export { queryNumber };
 
 export const store = configureStore({
@@ -54,4 +80,3 @@ export const store = configureStore({
 });
 
 export type RootState = ReturnType<typeof store.getState>;
-

@@ -3,6 +3,21 @@ export interface IQueryItem {
     queryRes: string;
 }
 
+export enum ResponseActions {
+    getMatching = 'getMatching'
+}
+
+export interface IResponseData {
+    action: ResponseActions;
+    payload: unknown;
+}
+
+export enum ServiceEvents {
+    connection = 'connection',
+    data = 'data',
+    open = 'open',
+}
+
 export function getRandomNumber(): string {
     let num = '';
     while(num.length < 4) {
@@ -26,4 +41,11 @@ export function matchNumbers(privateNumber: string, queryNumber: string): string
     }).filter(Boolean).length;
 
     return `${matchCount}:${includeCount}`;
+}
+
+export function isClient(): boolean {
+    return !isServer();
+}
+export function isServer(): boolean {
+    return typeof window === 'undefined' || typeof navigator === 'undefined' || !navigator.platform;
 }

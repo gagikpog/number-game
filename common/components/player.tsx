@@ -6,11 +6,11 @@ import List from './list';
 import { ChangeEvent, useRef, useState } from 'react';
 import { Replay } from '@mui/icons-material';
 
-
 const Player = () => {
 
     const privateNumber = useSelector((state: RootState) => state.privateNumber);
     const state = useSelector((state: RootState) => state.state);
+    const connected = useSelector((state: RootState) => state.connected);
     const queryList = useSelector((state: RootState) => state.queryList);
     const dispatch = useDispatch();
 
@@ -37,7 +37,7 @@ const Player = () => {
         }
     }
 
-    return (
+    const result = (
         <div className='tw-flex tw-flex-col tw-items-end tw-flex-1'>
             <div>
                 {
@@ -78,6 +78,7 @@ const Player = () => {
             </div>
         </div>
     );
+    return connected ? result : null;
 }
 
 export default Player;
