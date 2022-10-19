@@ -1,11 +1,5 @@
 import { DataConnection, Peer } from 'peerjs';
-import { ServiceEvents, IResponseData } from './utils';
-
-interface IRequest {
-    data: IResponseData;
-    callId: string;
-    needResult: boolean;
-}
+import { ServiceEvents, IRequest, ResponseActions } from './utils';
 
 type Subscriber = {[key: string]: (data: unknown) => void};
 
@@ -21,7 +15,7 @@ export class Service {
     private _conn: DataConnection = null as unknown as DataConnection;
     private _connectionOpened: boolean = false;
     private _timeout: number = 5000;
-    private _queue: {[key: string]: { resolve: (res?: IResponseData) => void, reject: (error?: Error) => void, timerIndex: number }} = {};
+    private _queue: {[key: string]: { resolve: (res?: IRequest) => void, reject: (error?: Error) => void, timerIndex: number }} = {};
     private _subscribers: ISubscribers = {
         [ServiceEvents.connection]: {},
         [ServiceEvents.data]: {},
@@ -41,14 +35,12 @@ export class Service {
                 try {
                     if (typeof str === 'string') {
                         const response = JSON.parse(str) as IRequest;
-                        this._resolve(response.callId, response.data);
+                        this._resolve(response.callId, response);
                     }
                 } catch (error) {
                     console.error(error);
                 }
             });
-            this._conn = conn;
-            this._notify(ServiceEvents.connection, true);
         });
 
         this._peer.on('close', () => {
@@ -57,28 +49,36 @@ export class Service {
         });
     }
 
-    connectTo(anotherPeersId: string) {
+    connectTo(anotherPeersId: string, withNotify: boolean = true): void {
         this._conn = this._peer.connect(anotherPeersId);
         this._conn.on('open', () => {
             this._connectionOpened = true;
             this._notify(ServiceEvents.connection, true);
+
+            if (withNotify) {
+                this.send({
+                    needResult: false,
+                    callId: '',
+                    data: {
+                        action: ResponseActions.connect,
+                        payload: {
+                            pickId: this._pickId
+                        }
+                    }
+                });
+            }
         });
     }
 
-    async send(data: IResponseData, needResult: boolean = false): Promise<IResponseData|void> {
+    async send(response: IRequest): Promise<IRequest|void> {
         if (this._connectionOpened) {
-
-            const response: IRequest = {
-                data,
-                callId: `${this._pickId}-coll-id-${Math.random()}`,
-                needResult
-            }
+            response.callId = response.callId || `${this._pickId}-coll-id-${Math.random()}`
 
             this._conn.send(JSON.stringify(response));
 
             return new Promise((resolve, reject) => {
 
-                const timerIndex = needResult ? setTimeout(() => {
+                const timerIndex = response.needResult ? setTimeout(() => {
                     this._resolve(response.callId, new Error('Timeout error'));
                 }, this._timeout) : null;
 
@@ -91,7 +91,15 @@ export class Service {
         }
     }
 
-    private _resolve(callId: string, data: IResponseData | Error): void {
+    private _resolve(callId: string, data: IRequest | Error): void {
+
+        if (!(data instanceof Error)) {
+            if (data.data.action === ResponseActions.connect) {
+                this.connectTo(data.data.payload.pickId, false);
+                return;
+            }
+        }
+
         const queue = this._queue[callId];
         if (queue) {
             if (data instanceof Error) {

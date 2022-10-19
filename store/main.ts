@@ -1,5 +1,5 @@
 import { createSlice, configureStore, createAsyncThunk } from '@reduxjs/toolkit';
-import { getRandomNumber, matchNumbers, IQueryItem, isClient, ServiceEvents } from '../common/utils';
+import { getRandomNumber, matchNumbers, IQueryItem, isClient, ServiceEvents, ResponseActions, IRequest } from '../common/utils';
 import { Service } from '../common/service';
 
 export enum GameState {
@@ -19,19 +19,43 @@ if (isClient()) {
         service.subscribe<boolean>(ServiceEvents.connection ,(connected: boolean) => {
             store.dispatch(setConnection(connected));
         });
+        service.subscribe<IRequest>(ServiceEvents.data ,(request: IRequest) => {
+            switch (request.data.action) {
+                case ResponseActions.getMatching:
+                    const number = request.data.payload.number as string;
+                    const privateNumber = store.getState().privateNumber
+                    const res = matchNumbers(privateNumber, number);
+                    return service.send({
+                        needResult: false,
+                        callId: request.callId,
+                        data: {
+                            action: ResponseActions.getMatching,
+                            payload: {
+                                number,
+                                queryRes: res
+                            }
+                        }
+                    });
+                    break;
+            }
+        });
     });
 }
-
-const queryPrivateNumber = getRandomNumber();
 
 const queryNumber = createAsyncThunk(
     'game/queryNumber',
     (value: string) => {
-        return Promise.resolve(matchNumbers(queryPrivateNumber, value)).then((queryRes: string) => {
-            return {
-                number: value,
-                queryRes
-            };
+        return service.send({
+            needResult: true,
+            callId: '',
+            data: {
+                action: ResponseActions.getMatching,
+                payload: {
+                    number: value
+                }
+            }
+        }).then((res: IRequest): string => {
+            return res.data.payload as string;
         });
     }
 );

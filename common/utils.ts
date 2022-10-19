@@ -3,8 +3,16 @@ export interface IQueryItem {
     queryRes: string;
 }
 
+export interface IRequest {
+    data: IResponseData;
+    callId: string;
+    needResult: boolean;
+}
+
 export enum ResponseActions {
-    getMatching = 'getMatching'
+    getMatching = 'getMatching',
+    matchingRes = 'matchingRes',
+    connect = 'connect'
 }
 
 export interface IResponseData {
@@ -40,7 +48,7 @@ export function matchNumbers(privateNumber: string, queryNumber: string): string
         return queryNumber.includes(val);
     }).filter(Boolean).length;
 
-    return `${matchCount}:${includeCount}`;
+    return `${includeCount}:${matchCount}`;
 }
 
 export function isClient(): boolean {
