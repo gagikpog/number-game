@@ -1,14 +1,12 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, setPrivateNumber, GameState, setGameState, generatePrivateNumber, queryNumber } from '../../store/main';
-import { Button } from '@mui/material';
+import { RootState, GameState, setGameState, queryNumber } from '../../store/main';
+import { Button, TextField } from '@mui/material';
 import NumberInput, { INumberInputRef } from './numberInput';
 import List from './list';
 import { ChangeEvent, useRef, useState } from 'react';
-import { Replay } from '@mui/icons-material';
 
 const Player = () => {
 
-    const privateNumber = useSelector((state: RootState) => state.privateNumber);
     const state = useSelector((state: RootState) => state.state);
     const connected = useSelector((state: RootState) => state.connected);
     const queryList = useSelector((state: RootState) => state.queryList);
@@ -20,15 +18,7 @@ const Player = () => {
         setCurrentQueryNumber(event.target.value);
     }
 
-
-    const privateNumberRef = useRef<INumberInputRef>(null);
     const currentQueryNumberRef = useRef<INumberInputRef>(null);
-
-    const onStartGame = () => {
-        if (privateNumberRef.current?.isValid()) {
-            dispatch(setGameState(GameState.Game));
-        }
-    }
 
     const queryNumberHandler = () => {
         if (currentQueryNumberRef.current?.isValid()) {
@@ -38,25 +28,14 @@ const Player = () => {
     }
 
     const result = (
-        <div className='tw-flex tw-flex-col tw-items-end tw-flex-1'>
+        <div className='tw-flex tw-flex-col tw-items-end tw-flex-1 tw-p-10'>
             <div>
-                {
-                    state === GameState.Start ? (
-                        <>
-                            <Button className='tw-ml-4' variant='contained' onClick={onStartGame}>Ready</Button>
-                            <Button className='tw-ml-4' onClick={() => dispatch(generatePrivateNumber())}>
-                                <Replay></Replay>
-                            </Button>
-                        </>
-                    ) : null
-                }
-
-                <NumberInput
-                    ref={privateNumberRef}
-                    onChange={(event) => dispatch(setPrivateNumber(event.target.value))}
-                    value={privateNumber}
-                    unique={true}
-                    disabled={state !== GameState.Start}
+                <TextField
+                    value='####'
+                    helperText=' '
+                    variant="standard"
+                    disabled={true}
+                    inputProps={{ style: { textAlign: 'end' } }}
                 />
             </div>
             <div className='tw-w-full'>

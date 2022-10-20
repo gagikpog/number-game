@@ -25,15 +25,17 @@ if (isClient()) {
                     const number = request.data.payload.number as string;
                     const privateNumber = store.getState().privateNumber
                     const res = matchNumbers(privateNumber, number);
+                    const payload = {
+                        number,
+                        queryRes: res
+                    };
+                    store.dispatch(rivalQuery(payload));
                     return service.send({
                         needResult: false,
                         callId: request.callId,
                         data: {
                             action: ResponseActions.getMatching,
-                            payload: {
-                                number,
-                                queryRes: res
-                            }
+                            payload
                         }
                     });
                     break;
@@ -66,6 +68,7 @@ const gameSlice = createSlice({
         privateNumber: getRandomNumber(),
         state: GameState.Start,
         queryList: [] as IQueryItem[],
+        rivalQueryList: [] as IQueryItem[],
         pickId: '',
         connected: false
     },
@@ -87,6 +90,9 @@ const gameSlice = createSlice({
         },
         setConnection: (state, action) => {
             state.connected = action.payload;
+        },
+        rivalQuery: (state, action) => {
+            state.rivalQueryList.push(action.payload);
         }
     },
     extraReducers: (builder) => {
@@ -96,7 +102,7 @@ const gameSlice = createSlice({
     }
 });
 
-export const { setPrivateNumber, setGameState, generatePrivateNumber, connectTo, setPickId, setConnection } = gameSlice.actions;
+export const { setPrivateNumber, setGameState, generatePrivateNumber, connectTo, setPickId, setConnection, rivalQuery } = gameSlice.actions;
 export { queryNumber };
 
 export const store = configureStore({
