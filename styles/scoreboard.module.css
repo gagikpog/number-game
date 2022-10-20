@@ -1,0 +1,24 @@
+.item-on {
+    background-color: green;
+}
+.item-off {
+    background-color: red;
+}
+.item-off::before {
+    content: '|';
+    position: absolute;
+    transform: rotate(45deg);
+    top: -5px;
+    left: 11px;
+    font-size: 22px;
+    color: #646464;
+}
+.item-unknown {
+    background-color: gray;
+}
+
+.item {
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+}

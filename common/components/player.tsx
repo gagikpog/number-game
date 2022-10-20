@@ -4,6 +4,7 @@ import { Button, TextField } from '@mui/material';
 import NumberInput, { INumberInputRef } from './numberInput';
 import List from './list';
 import { ChangeEvent, useRef, useState } from 'react';
+import Scoreboard from './scoreboard';
 
 const Player = () => {
 
@@ -39,6 +40,9 @@ const Player = () => {
                 />
             </div>
             <div className='tw-w-full'>
+                {
+                    state === GameState.Game ? <Scoreboard className='tw-mb-10'/> : null
+                }
                 {
                     state !== GameState.Start ? <List queryList={queryList}></List> : null
                 }
