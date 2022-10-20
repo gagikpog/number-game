@@ -22,7 +22,8 @@ if (isClient()) {
         service.subscribe<IRequest>(ServiceEvents.data ,(request: IRequest) => {
             switch (request.data.action) {
                 case ResponseActions.getMatching:
-                    const number = request.data.payload.number as string;
+                    const requestPayload = request.data.payload as {number: string};
+                    const number = requestPayload.number;
                     const privateNumber = store.getState().privateNumber
                     const res = matchNumbers(privateNumber, number);
                     const payload = {
@@ -56,8 +57,8 @@ const queryNumber = createAsyncThunk(
                     number: value
                 }
             }
-        }).then((res: IRequest): string => {
-            return res.data.payload as string;
+        }).then((res): string => {
+            return res?.data.payload as string;
         });
     }
 );

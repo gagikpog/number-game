@@ -23,7 +23,7 @@ const Player = () => {
 
     const queryNumberHandler = () => {
         if (currentQueryNumberRef.current?.isValid()) {
-            dispatch(queryNumber(currentQueryNumber));
+            dispatch<any>(queryNumber(currentQueryNumber));
             setCurrentQueryNumber('');
         }
     }

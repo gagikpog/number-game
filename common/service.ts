@@ -95,7 +95,8 @@ export class Service {
 
         if (!(data instanceof Error)) {
             if (data.data.action === ResponseActions.connect) {
-                this.connectTo(data.data.payload.pickId, false);
+                const payload = data.data.payload as { pickId: string };
+                this.connectTo(payload.pickId, false);
                 return;
             }
         }
