@@ -15,10 +15,10 @@ const Main: NextPage = () => {
     return (
         <div className='tw-flex tw-w-full tw-h-full tw-flex-col'>
             <Header />
-            <div className='tw-flex tw-flex-1 tw-justify-center tw-p-8'>
+            <div className='tw-flex tw-flex-1 tw-justify-center tw-p-6'>
                 <div className={`tw-flex tw-w-full ${main.container}`}>
                     {
-                        connected ? <><Player></Player> <Rival></Rival></> : <Connection/>
+                        connected ? <><Player /> <Rival  className={main.right} /></> : <Connection/>
                     }
                 </div>
             </div>

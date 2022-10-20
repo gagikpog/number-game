@@ -6,7 +6,11 @@ import List from './list';
 import { useRef } from 'react';
 import { Replay } from '@mui/icons-material';
 
-const Rival = () => {
+interface IProps {
+    className: string;
+}
+
+const Rival = (props: IProps) => {
 
     const privateNumber = useSelector((state: RootState) => state.privateNumber);
     const state = useSelector((state: RootState) => state.state);
@@ -23,7 +27,7 @@ const Rival = () => {
     }
 
     const result = (
-        <div className='tw-flex tw-flex-col tw-items-end tw-flex-1 tw-p-10'>
+        <div className={`tw-flex tw-flex-col tw-items-end tw-flex-1 tw-flex-shrink tw-p-10 ${props.className || ''}`}>
             <div>
                 {
                     state === GameState.Start ? (

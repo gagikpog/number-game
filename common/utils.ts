@@ -57,3 +57,14 @@ export function isClient(): boolean {
 export function isServer(): boolean {
     return typeof window === 'undefined' || typeof navigator === 'undefined' || !navigator.platform;
 }
+
+export function getNumberItems(count: number = 10, start: number = 0): number[] {
+    return Array(count).fill(null).map((_, index): number => index + start);
+}
+
+export enum NumberItemState {
+    on = 'on',
+    off = 'off',
+    unset = 'unset',
+    unknown = 'unknown'
+}

@@ -1,10 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, GameState, setGameState, queryNumber } from '../../store/main';
 import { Button, TextField } from '@mui/material';
-import NumberInput, { INumberInputRef } from './numberInput';
 import List from './list';
-import { ChangeEvent, useRef, useState } from 'react';
+import { useState } from 'react';
 import Scoreboard from './scoreboard';
+import NumberBox from './numberBox';
 
 const Player = () => {
 
@@ -13,19 +13,11 @@ const Player = () => {
     const queryList = useSelector((state: RootState) => state.queryList);
     const dispatch = useDispatch();
 
-    const [currentQueryNumber, setCurrentQueryNumber] = useState('');
-
-    const currentQueryNumberChanged = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setCurrentQueryNumber(event.target.value);
-    }
-
-    const currentQueryNumberRef = useRef<INumberInputRef>(null);
+    const [currentQueryNumber, setCurrentQueryNumber] = useState('0000');
 
     const queryNumberHandler = () => {
-        if (currentQueryNumberRef.current?.isValid()) {
-            dispatch<any>(queryNumber(currentQueryNumber));
-            setCurrentQueryNumber('');
-        }
+        dispatch<any>(queryNumber(currentQueryNumber));
+        setCurrentQueryNumber('0000');
     }
 
     const result = (
@@ -48,12 +40,8 @@ const Player = () => {
                 }
                 {
                     state === GameState.Game ?
-                    <div>
-                        <NumberInput
-                            ref={currentQueryNumberRef}
-                            onChange={currentQueryNumberChanged}
-                            value={currentQueryNumber}
-                        />
+                    <div className='tw-flex'>
+                        <NumberBox value={currentQueryNumber} className='tw-mb-10' onChange={(val) => setCurrentQueryNumber(val)} />
                         <Button onClick={queryNumberHandler} className='tw-ml-4' variant='contained'>Submit</Button>
                     </div>
                     : null
