@@ -1,6 +1,7 @@
 import { createSlice, configureStore, createAsyncThunk } from '@reduxjs/toolkit';
-import { getRandomNumber, matchNumbers, IQueryItem, isClient, ServiceEvents, ResponseActions, IRequest } from '../common/utils';
+import { getRandomNumber, matchNumbers, IQueryItem, isClient, ServiceEvents, ResponseActions, IRequest, getPickId } from '../common/utils';
 import { Service } from '../common/service';
+import { AlertColor } from '@mui/material';
 
 export enum GameState {
     Game = 'game',
@@ -15,6 +16,10 @@ if (isClient()) {
         service = new _Service();
         service.subscribe<string>(ServiceEvents.open ,(peerId: string) => {
             store.dispatch(setPickId(peerId));
+            const anotherPeersId = getPickId(window.location.href);
+            if (anotherPeersId) {
+                store.dispatch(connectTo(anotherPeersId));
+            }
         });
         service.subscribe<boolean>(ServiceEvents.connection ,(connected: boolean) => {
             store.dispatch(setConnection(connected));
@@ -71,7 +76,11 @@ const gameSlice = createSlice({
         queryList: [] as IQueryItem[],
         rivalQueryList: [] as IQueryItem[],
         pickId: '',
-        connected: false
+        connected: false,
+        message: {
+            text: '',
+            type: 'error' as AlertColor
+        }
     },
     reducers: {
         setPrivateNumber: (state, action) => {
@@ -94,6 +103,12 @@ const gameSlice = createSlice({
         },
         rivalQuery: (state, action) => {
             state.rivalQueryList.push(action.payload);
+        },
+        showMessage: (state, action) => {
+            state.message = {
+                text: action.payload?.text || '',
+                type: action.payload?.type || 'error'
+            };
         }
     },
     extraReducers: (builder) => {
@@ -103,7 +118,7 @@ const gameSlice = createSlice({
     }
 });
 
-export const { setPrivateNumber, setGameState, generatePrivateNumber, connectTo, setPickId, setConnection, rivalQuery } = gameSlice.actions;
+export const { setPrivateNumber, setGameState, generatePrivateNumber, connectTo, setPickId, setConnection, rivalQuery, showMessage } = gameSlice.actions;
 export { queryNumber };
 
 export const store = configureStore({

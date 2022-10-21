@@ -86,3 +86,26 @@ export function throttle<T>(callback: (args: T) => void, timeout: number): (args
         }, timeout);
     }
 }
+
+export function getPickId(text: string): string {
+    const pattern = /^https?:\/\/numgame\.gagikpog.ru.*\?pickId=/;
+    const res = pattern.test(text) ? text.replace(pattern, '') : text;
+
+    // ########-####-####-####-############
+    const uuidPattern = /^\w{8}(-\w{4}){3}-\w{12}$/;
+
+    return uuidPattern.test(res) ? res : '';
+}
+
+export function getPickIdFromClipboard(): Promise<string> {
+    return navigator.clipboard.readText().then((text: string) => {
+        const res = getPickId(text);
+        if (res) {
+            return res;
+        } else {
+            throw new Error('Invalided data from clipboard');
+        }
+    }).catch((err: Error) => {
+        throw new Error(`Failed to read clipboard contents: ${err.message}`);
+    });
+}
