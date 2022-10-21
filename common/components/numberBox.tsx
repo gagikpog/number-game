@@ -2,6 +2,7 @@ import { useState } from "react";
 import { getNumberItems } from "../utils";
 import styles from '../../styles/numberBox.module.css';
 import NumberBoxItem from "./numberBoxItem";
+import NumberBoxSlide from "./numberBoxSlide";
 
 interface IProps {
     value: string;
@@ -17,24 +18,21 @@ interface ICol {
 const NumberBox = (props: IProps) => {
 
     const [cols, setCols] = useState(() => getNumberItems(4).map((val): ICol => ({val, opened: false})));
-    const [items] = useState(getNumberItems);
-    const blockSize = 27;
     const value = props.value.padStart(4, '0');
 
-    const numberBoxItemClick = (val: number, col: ICol): void => {
+    const numberBoxItemClick = (val: string, col: ICol): void => {
+        const newValue = value.split('').map((res: string, index: number): string => {
+            return index === col.val ? val : res;
+        }).join('');
 
-        if (col.opened) {
-            const newValue = value.split('').map((res: string, index: number): string => {
-                return index === col.val ? `${val}` : res;
-            }).join('');
+        props.onChange?.(newValue);
+    }
 
-            props.onChange?.(newValue);
-        }
-
+    const openChanged = (opened: boolean, col: ICol): void => {
         const newCols = cols.map((item: ICol) => {
             return {
                 ...item,
-                opened: item.val === col.val ? !col.opened : false
+                opened: item.val === col.val ? opened : false
             }
         });
 
@@ -46,24 +44,14 @@ const NumberBox = (props: IProps) => {
             {
                 cols.map((col) => {
                     return (
-                        <div key={`col-${col.val}`} data-key={`col-${col.val}`} className={`tw-relative ${styles.input} ${col.opened ? '' : 'tw-overflow-hidden'}`}>
-                            <div className={`tw-flex tw-flex-col tw-z-10 tw-absolute ${styles.col}`} style={{ left: 0, top: `-${Number(value[col.val]) * blockSize}px`}}>
-                                {
-                                    items.map((item) => {
-                                        return (
-                                            <NumberBoxItem
-                                                data-key={`row-${item}`}
-                                                key={`row-${item}`}
-                                                value={item}
-                                                changeOnRightClick={true}
-                                                onClick={(val) => numberBoxItemClick(val, col)}
-                                                className='tw-mt-2'
-                                            />
-                                        )
-                                    })
-                                }
-                            </div>
-                        </div>
+                        <NumberBoxSlide
+                            key={`col-${col.val}`}
+                            data-key={`col-${col.val}`}
+                            value={value[col.val]}
+                            opened={col.opened}
+                            onChange={(val) => numberBoxItemClick(val, col)}
+                            onOpenChange={(opened) => openChanged(opened, col)}
+                        />
                     )
                 })
             }

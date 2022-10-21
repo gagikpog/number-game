@@ -68,3 +68,21 @@ export enum NumberItemState {
     unset = 'unset',
     unknown = 'unknown'
 }
+
+export function throttle<T>(callback: (args: T) => void, timeout: number): (args: T) => void {
+    let index: null | ReturnType<typeof setTimeout> = null;
+    return function() {
+        const args = arguments;
+
+        if (index) {
+            clearTimeout(index);
+            index = null;
+        }
+
+        index = setTimeout(() => {
+            index = null;
+            // @ts-ignore
+            callback(...args);
+        }, timeout);
+    }
+}
