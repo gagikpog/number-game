@@ -40,7 +40,7 @@ const Player = () => {
                 }
                 {
                     state === GameState.Game ?
-                    <div className='tw-flex'>
+                    <div className='tw-flex tw-mt-8'>
                         <NumberBox value={currentQueryNumber} className='tw-mb-10' onChange={(val) => setCurrentQueryNumber(val)} />
                         <Button onClick={queryNumberHandler} className='tw-ml-4' variant='contained'>Submit</Button>
                     </div>

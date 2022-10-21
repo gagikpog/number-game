@@ -50,7 +50,7 @@ const Rival = (props: IProps) => {
             </div>
             <div className='tw-w-full'>
                 {
-                    state !== GameState.Start ? <List queryList={rivalQueryList}></List> : null
+                    state !== GameState.Start ? <List queryList={rivalQueryList} align='end' /> : null
                 }
             </div>
         </div>

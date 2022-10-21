@@ -35,6 +35,14 @@ body,
   overflow: auto;
   height: 100%;
 }
+*::-webkit-scrollbar {
+  width: 4px;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #6b6b6b;
+  outline: 1px solid #525252;
+  border-radius: 4px;
+}
 :root {
   --offset-2: 2px;
   --offset-4: 4px;
