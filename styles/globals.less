@@ -51,8 +51,15 @@ html, body, #__next, #app {
 }
 
 :root {
+    --offset--20: -20px;
+    --offset--10: -10px;
+    --offset--8: -8px;
+    --offset--6: -6px;
+    --offset--4: -4px;
+    --offset--2: -2px;
     --offset-2: 2px;
     --offset-4: 4px;
+    --offset-6: 6px;
     --offset-8: 8px;
     --offset-10: 10px;
     --offset-20: 20px;
@@ -73,24 +80,46 @@ html, body, #__next, #app {
     .get-sizes(@prop, @dir, auto, auto);
     .get-sizes(@prop, @dir, 2, var(--offset-2));
     .get-sizes(@prop, @dir, 4, var(--offset-4));
+    .get-sizes(@prop, @dir, 6, var(--offset-6));
     .get-sizes(@prop, @dir, 8, var(--offset-8));
     .get-sizes(@prop, @dir, 10, var(--offset-10));
     .get-sizes(@prop, @dir, 20, var(--offset-20));
+}
+
+.sizes-mixin-(@prop, @dir) {
+    .get-sizes(@prop, @dir, -2, var(--offset--2));
+    .get-sizes(@prop, @dir, -4, var(--offset--4));
+    .get-sizes(@prop, @dir, -6, var(--offset--6));
+    .get-sizes(@prop, @dir, -8, var(--offset--8));
+    .get-sizes(@prop, @dir, -10, var(--offset--10));
+    .get-sizes(@prop, @dir, -20, var(--offset--20));
 }
 
 .direction-mixin(@prefix) {
     .sizes-mixin(@prefix, full);
     &t {
         .sizes-mixin(@prefix, top);
+        & when (@prefix = margin) {
+            .sizes-mixin-(@prefix, top);
+        }
     }
     &r {
         .sizes-mixin(@prefix, right);
+        & when (@prefix = margin) {
+            .sizes-mixin-(@prefix, right);
+        }
     }
     &b {
         .sizes-mixin(@prefix, bottom);
+        & when (@prefix = margin) {
+            .sizes-mixin-(@prefix, bottom);
+        }
     }
     &l {
         .sizes-mixin(@prefix, left);
+        & when (@prefix = margin) {
+            .sizes-mixin-(@prefix, left);
+        }
     }
 }
 

@@ -7,6 +7,7 @@ interface INumberInputProps {
     unique?: boolean;
     disabled?: boolean;
     className?: string;
+    passChar?: string;
 }
 
 export interface INumberInputRef {
@@ -52,11 +53,13 @@ const NumberInput = forwardRef((props: INumberInputProps, ref: Ref<INumberInputR
         }
     }));
 
+    const value = props.passChar ? props.passChar.repeat(props.value.length) : props.value;
+
     return (
         <TextField
             onChange={onChange}
             className={props.className}
-            value={props.value}
+            value={value}
             error={error}
             helperText={message}
             variant="standard"

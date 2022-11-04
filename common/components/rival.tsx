@@ -1,10 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, setPrivateNumber, GameState, setGameState, generatePrivateNumber } from '../../store/main';
-import { Button } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import NumberInput, { INumberInputRef } from './numberInput';
 import List from './list';
-import { useRef } from 'react';
-import { Replay } from '@mui/icons-material';
+import { useRef, useState } from 'react';
+import { Replay, VisibilityOff, Visibility } from '@mui/icons-material';
 
 interface IProps {
     className: string;
@@ -16,6 +16,7 @@ const Rival = (props: IProps) => {
     const state = useSelector((state: RootState) => state.state);
     const connected = useSelector((state: RootState) => state.connected);
     const rivalQueryList = useSelector((state: RootState) => state.rivalQueryList);
+    const [numberVisibility, setNumberVisibility] = useState(true);
     const dispatch = useDispatch();
 
     const privateNumberRef = useRef<INumberInputRef>(null);
@@ -26,9 +27,17 @@ const Rival = (props: IProps) => {
         }
     }
 
+    const button = (
+        <div className='tw-mt--2 tw-mr--8'>
+            <IconButton color="primary" size='small' onClick={() => setNumberVisibility(!numberVisibility)}>
+                { numberVisibility ? <VisibilityOff /> : <Visibility /> }
+            </IconButton>
+        </div>
+    );
+
     const result = (
         <div className={`tw-flex tw-flex-col tw-items-end tw-flex-1 tw-flex-shrink tw-p-10 ${props.className || ''}`}>
-            <div>
+            <div className='tw-flex'>
                 {
                     state === GameState.Start ? (
                         <>
@@ -44,9 +53,11 @@ const Rival = (props: IProps) => {
                     ref={privateNumberRef}
                     onChange={(event) => dispatch(setPrivateNumber(event.target.value))}
                     value={privateNumber}
+                    passChar={numberVisibility ? undefined : '#'}
                     unique={true}
                     disabled={state !== GameState.Start}
                 />
+                { state !== GameState.Start ? button : null }
             </div>
             <div className='tw-w-full'>
                 {

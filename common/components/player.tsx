@@ -17,7 +17,6 @@ const Player = () => {
 
     const queryNumberHandler = () => {
         dispatch<any>(queryNumber(currentQueryNumber));
-        setCurrentQueryNumber('0000');
     }
 
     const result = (
@@ -42,7 +41,9 @@ const Player = () => {
                     state === GameState.Game ?
                     <div className='tw-flex tw-mt-8'>
                         <NumberBox value={currentQueryNumber} className='tw-mb-10' onChange={(val) => setCurrentQueryNumber(val)} />
-                        <Button onClick={queryNumberHandler} className='tw-ml-4' variant='contained'>Submit</Button>
+                        <div className='tw-ml-4'>
+                            <Button onClick={queryNumberHandler} variant='contained'>Submit</Button>
+                        </div>
                     </div>
                     : null
                 }
