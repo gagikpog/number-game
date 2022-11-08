@@ -1,5 +1,5 @@
 import { RefObject, UIEvent, useEffect, useRef, useState } from "react";
-import { getNumberItems, throttle } from "../utils";
+import { defaultBlockSize, getNumberItems, throttle } from "../utils";
 import styles from '../../styles/numberBox.module.css';
 import NumberBoxItem from "./numberBoxItem";
 
@@ -9,12 +9,14 @@ interface IProps {
     className?: string;
     onChange?: (value: string) => void;
     onOpenChange?: (value: boolean) => void;
+    size?: number;
 }
 
 const NumberBoxSlide = (props: IProps) => {
     const [items] = useState(getNumberItems);
     const ref = useRef(null);
-    const blockSize = 27;
+    const size = props.size || defaultBlockSize;
+    const blockSize = size + 2;
     const value = props.value || '0';
 
     useEffect(() => {
@@ -23,7 +25,7 @@ const NumberBoxSlide = (props: IProps) => {
             rootDiv.scrollTop = Number(value) * blockSize;
             const scrollHandler = throttle<UIEvent>((event: UIEvent) => {
                 const target = event.target as unknown as HTMLDivElement;
-                const val = Math.round(target.scrollTop / 27);
+                const val = Math.round(target.scrollTop / blockSize);
                 props.onChange?.(`${val}`);
             }, 250);
 
@@ -55,19 +57,25 @@ const NumberBoxSlide = (props: IProps) => {
         top: `-${Number(value) * blockSize}px`
     };
 
+    const inputStyle = {
+        height: `${blockSize}px`,
+        width: `${blockSize}px`
+    };
+
     return (
-        <div ref={ref as RefObject<HTMLDivElement>} className={`tw-relative ${styles.input} ${props.opened ? '' : 'tw-overflow-y-scroll'}`}>
+        <div ref={ref as RefObject<HTMLDivElement>} style={inputStyle} className={`tw-relative ${styles.input} ${props.opened ? '' : 'tw-overflow-y-scroll'}`}>
             <div className={`tw-flex tw-flex-col tw-z-10 ${props.opened ? 'tw-absolute' : ''} ${styles.col}`} style={style}>
                 {
                     items.map((item) => {
                         return (
                             <NumberBoxItem
                                 data-key={`row-${item}`}
+                                size={size}
                                 key={`row-${item}`}
                                 value={item}
                                 changeOnRightClick={true}
                                 onClick={(val) => numberBoxItemClick(val)}
-                                className={`tw-mt-2 ${styles.item}`}
+                                className={`tw-mb-2 ${styles.item}`}
                             />
                         )
                     })

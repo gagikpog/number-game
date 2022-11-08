@@ -15,12 +15,11 @@
 }
 
 .item-off::before {
-    content: '|';
+    content: '∅';
     position: absolute;
-    transform: rotate(45deg);
-    top: -5px;
-    left: 11px;
-    font-size: 22px;
+    top: -2px;
+    right: 3px;
+    font-size: 10px;
     color: #646464;
 }
 
@@ -41,7 +40,5 @@
 }
 
 .item {
-    width: 25px;
-    height: 25px;
     border-radius: 4px;
 }

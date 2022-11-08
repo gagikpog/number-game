@@ -8,6 +8,7 @@ interface IProps {
     value: string;
     className?: string;
     onChange?: (value: string) => void;
+    size?: number;
 }
 
 interface ICol {
@@ -45,6 +46,7 @@ const NumberBox = (props: IProps) => {
                 cols.map((col) => {
                     return (
                         <NumberBoxSlide
+                            size={props.size}
                             key={`col-${col.val}`}
                             data-key={`col-${col.val}`}
                             value={value[col.val]}

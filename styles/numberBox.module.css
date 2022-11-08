@@ -1,8 +1,5 @@
 .input {
-    height: 27px;
-    width: 27px;
     scroll-snap-type: y mandatory;
-    /* overflow-y: scroll; */
 }
 
 .input::-webkit-scrollbar {

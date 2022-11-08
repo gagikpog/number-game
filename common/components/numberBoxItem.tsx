@@ -1,5 +1,5 @@
 import { MouseEvent, useState } from 'react';
-import { NumberItemState } from '../utils';
+import { defaultBlockSize, NumberItemState } from '../utils';
 import styles from '../../styles/numberBoxItem.module.css';
 
 function getNextState(current: NumberItemState): NumberItemState {
@@ -16,6 +16,7 @@ interface IProps {
     className?: string;
     onClick?: (value: number) => void;
     changeOnRightClick?: boolean;
+    size?: number;
 }
 
 const NumberBoxItem = (props: IProps) => {
@@ -32,8 +33,15 @@ const NumberBoxItem = (props: IProps) => {
         }
     };
 
+    const size: number = props.size || defaultBlockSize;
+
+    const style = {
+        width: `${size}px`,
+        height: `${size}px`
+    };
+
     return (
-        <div className={itemClasses} onClick={(event) => onClick(event)} onContextMenu={(event) => onClick(event, true)} >
+        <div className={itemClasses} onClick={(event) => onClick(event)} onContextMenu={(event) => onClick(event, true)} style={style}>
             {props.value}
         </div>
     );
